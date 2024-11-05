@@ -51,10 +51,23 @@
     # Save iptables rules so they persist after reboot
     - name: Save iptables rules
       ansible.builtin.command: service iptables save
-  
+      
     # Ensure iptables service is enabled and started to enforce firewall rules
     - name: Ensure iptables service is enabled and started
       ansible.builtin.service:
         name: iptables
         state: started
         enabled: true
+
+    # Download GOSS executable to perform configuration testing
+    - name: Download GOSS
+      ansible.builtin.get_url:
+        url: https://github.com/aelsabbahy/goss/releases/latest/download/goss-linux-amd64
+        dest: /usr/local/bin/goss
+        mode: '0755'
+
+    # Verify GOSS installation by checking its version
+    - name: Verify GOSS installation
+      ansible.builtin.command: /usr/local/bin/goss --version
+      register: goss_version
+      changed_when: false
