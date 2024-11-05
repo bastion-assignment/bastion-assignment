@@ -1,3 +1,4 @@
+# Create the NLB 
 resource "aws_lb" "nlb" {
   name                             = "${var.environment}-bastion-nlb"
   load_balancer_type               = "network"
@@ -10,6 +11,7 @@ resource "aws_lb" "nlb" {
   }
 }
 
+# Create the target group for the NLB to direct traffic to the bastion instance
 resource "aws_lb_target_group" "nlb_tg" {
   name        = "${var.environment}-bastion-tg"
   port        = 22
@@ -31,6 +33,7 @@ resource "aws_lb_target_group" "nlb_tg" {
   }
 }
 
+# Create a listener for the NLB to accept connections on port 22
 resource "aws_lb_listener" "nlb_listener" {
   load_balancer_arn = aws_lb.nlb.arn
   port              = "22"
@@ -42,6 +45,7 @@ resource "aws_lb_listener" "nlb_listener" {
   }
 }
 
+# Attach the Auto Scaling Group to the NLB target group
 resource "aws_autoscaling_attachment" "asg_attachment" {
   autoscaling_group_name = aws_autoscaling_group.bastion_asg.name
   lb_target_group_arn    = aws_lb_target_group.nlb_tg.arn

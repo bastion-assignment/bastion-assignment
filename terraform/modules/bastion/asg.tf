@@ -1,3 +1,4 @@
+# Fetch the latest AMI
 data "aws_ami" "bastion" {
   most_recent = true
   filter {
@@ -7,6 +8,7 @@ data "aws_ami" "bastion" {
   owners = ["self"]
 }
 
+# Create a launch template for the bastion ASG
 resource "aws_launch_template" "bastion_lt" {
   name_prefix   = "${var.environment}-bastion-lt-"
   image_id      = data.aws_ami.bastion.id
@@ -30,6 +32,7 @@ resource "aws_launch_template" "bastion_lt" {
   }
 }
 
+# Create an ASG with one instance, in the private network
 resource "aws_autoscaling_group" "bastion_asg" {
   name                = "${var.environment}-bastion-asg"
   max_size            = 1
