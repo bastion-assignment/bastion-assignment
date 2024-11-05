@@ -1,0 +1,60 @@
+- name: Configure the bastion host
+  hosts: all
+  become: true
+  tasks:
+    # Ensure SSH is installed so we can access the instance
+    - name: Ensure SSH is installed
+      ansible.builtin.yum:
+        name: openssh-server
+        state: present
+
+    # Enable and start the SSH service to allow SSH connections
+    - name: Ensure SSH service is enabled and started
+      ansible.builtin.service:
+        name: sshd
+        state: started
+        enabled: true
+
+    # Install iptables-services to manage firewall rules
+    - name: Install iptables-services
+      ansible.builtin.yum:
+        name: iptables-services
+        state: present
+
+    # Allow SSH on port 22 before setting default policies
+    - name: Allow SSH on port 22 before setting default policy
+      ansible.builtin.iptables:
+        chain: INPUT
+        protocol: tcp
+        destination_port: 22
+        jump: ACCEPT
+
+    # Allow established and related connections to maintain existing sessions
+    - name: Allow established and related connections
+      ansible.builtin.iptables:
+        chain: INPUT
+        ctstate: ESTABLISHED,RELATED
+        jump: ACCEPT
+
+    # Set default policy to DROP for INPUT chain to block unwanted traffic
+    - name: Set default policy to DROP for INPUT chain
+      ansible.builtin.iptables:
+        chain: INPUT
+        policy: DROP
+
+    # Set default policy to ACCEPT for OUTPUT chain to allow outbound traffic
+    - name: Set default policy to ACCEPT for OUTPUT chain
+      ansible.builtin.iptables:
+        chain: OUTPUT
+        policy: ACCEPT
+
+    # Save iptables rules so they persist after reboot
+    - name: Save iptables rules
+      ansible.builtin.command: service iptables save
+  
+    # Ensure iptables service is enabled and started to enforce firewall rules
+    - name: Ensure iptables service is enabled and started
+      ansible.builtin.service:
+        name: iptables
+        state: started
+        enabled: true
