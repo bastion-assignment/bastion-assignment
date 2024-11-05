@@ -9,4 +9,5 @@ module "bastion_host" {
   instance_type           = var.instance_type
   ami_name_pattern        = var.ami_name_pattern
   allowed_ssh_cidr_blocks = var.allowed_ssh_cidr_blocks
+  enable_cloudwatch_alarm = var.enable_bastion_cloudwatch_alarm
 }

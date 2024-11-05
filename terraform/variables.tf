@@ -42,3 +42,9 @@ variable "allowed_ssh_cidr_blocks" {
   type        = list(string)
   default     = ["0.0.0.0/0"]
 }
+
+variable "enable_bastion_cloudwatch_alarm" {
+  description = "Set to true to create CloudWatch alarm for NLB unhealthy host count"
+  type        = bool
+  default     = true
+}
