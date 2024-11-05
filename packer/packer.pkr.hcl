@@ -69,4 +69,16 @@ build {
   provisioner "ansible" {
     playbook_file = "./playbook.yml"
   }
+  # Copy the GOSS YAML file to the instance for testing
+  provisioner "file" {
+    source      = "./goss.yaml"
+    destination = "/tmp/goss.yaml"
+  }
+
+  # Run GOSS tests to validate the configuration
+  provisioner "shell" {
+    inline = [
+      "/usr/local/bin/goss -g /tmp/goss.yaml validate"
+    ]
+  }
 }
