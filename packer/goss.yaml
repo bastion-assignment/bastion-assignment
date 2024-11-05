@@ -1,0 +1,38 @@
+service:
+# Ensure SSHD service is up and running
+  sshd:
+    enabled: true
+    running: true
+    skip: false
+# Ensure iptables service is up and running
+  iptables:
+    enabled: true
+    running: true
+    skip: false
+# Esnure port 22 is listening
+port:
+  tcp:22:
+    listening: true
+    ip:
+    - 0.0.0.0
+  tcp6:22:
+    listening: true
+    ip:
+    - '::'
+# Ensure sshd system user exists    
+user:
+  sshd:
+    exists: true
+    uid: 74
+    gid: 74
+    groups:
+    - sshd
+    home: /usr/share/empty.sshd
+    shell: /sbin/nologin
+group:
+  sshd:
+    exists: true
+    gid: 74
+process:
+  sshd:
+    running: true
